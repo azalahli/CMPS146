@@ -1,0 +1,21 @@
+Jeremy Tan
+
+In this experiment, the vanilla bot played against the modified bot.
+
+The tree sizes were as followed:
+test 1: 400
+test 2: 800
+test 3: 1000
+test 4: 1500
+test 5: 2000
+
+In test 1, the modified bot won over the vanilla bot with it having 42 wins versus 39 wins and had draws of 19 times.
+In test 2, the modified bot barely won over the vanilla bot with it having 40 wins versus 39 wins and had draws of 20 times.
+In test 3, the vanilla bot won over with it having 42 wins over the 33 wins and 25 draws.
+In test 4, the vanilla bot won over with it having 60 wins over the 30 wins and 10 draws.
+
+The modified version only wins more games if the tree size is small. I suspect this is because of the exploration factor being high for the modified bot.
+This high exploration factor enables it to search more nodes quickly to find better moves than the vanilla bot, so that's why it won in test 1 and 2.
+
+However, this leads to it falling behind in test 3, 4, and 5 because it keeps trying to explore rather than win games. By doing so, the vanilla bot catches
+up and is able to use the fact that it has higher exploitation to beat the modified bot.

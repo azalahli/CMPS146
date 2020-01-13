@@ -1,0 +1,29 @@
+INFO:root:
+Selector: High Level Ordering of Strategies
+| Sequence: Lone Planet Safety Plan
+| | Check: only_1_planet
+| | Check: nearby_threat_check
+| | Action: stall
+| Sequence: Spread Strategy
+| | Check: if_neutral_planet_available
+| | Action: spread_to_weakest_neutral_planet
+| Selector: Offense Strategy 2
+| | Sequence: Attack Close Enemies
+| | | Check: nearby_enemy
+| | | Action: attack_nearby_enemies
+| | Sequence: Attack With Tons of Ships
+| | | Check: have_50_perc_more_ships
+| | | Action: attack_weakest_enemy_planets
+| Sequence: Defensive Strategy
+| | Check: under_attack
+| | Action: defend_planets_under_attack
+| Sequence: Opportunistic Strategy
+| | Check: enemy_attacking_neutral
+| | Action: opportunity_attack
+| Selector: Expansion Strategy
+| | Sequence: Attack Nearby Neutrals
+| | | Check: nearby_neutral
+| | | Action: take_nearby_neutrals
+| | Sequence: Use Idle Ships
+| | | Check: too_many_ships
+| | | Action: attack_with_idle

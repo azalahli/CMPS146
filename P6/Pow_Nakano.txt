@@ -1,0 +1,109 @@
+This group does not intend to participate in the competition:
+As amusing as goomba-rain is, it is not good gameplay.
+
+both:
+generate_sucessors:
+    Implemented both random and elite selection:
+    These two can work simultaneously with each other, and so they were used in conjunction.
+    This works because we divide up the population into two halves, randomize them, and then the last two never get to breed.
+    Instead, they are replaced with the best and the worst individuals of the last generation.
+    This is done to hopefully reach the optimal individual without repeatedly generating the same individual over and over again.
+            
+            
+individual_grid:
+
+    generate_children for I_G:
+        This was done with constant(midpoint on x axis) single point crossover. The original code was modifed to return two children for a single call of generate_children, because I didn't want
+        two versions of generate_sucessors or to modify the DE encoding. It also ensures that all information about a population is conserved inside of it somewhere
+
+        XXXXXXXXXXXXXXXX
+        YYYYYYYYYYYYYYYY
+
+        ===>
+
+        XXXXXXXXYYYYYYYY <= Child 1
+        YYYYYYYYXXXXXXXX <= Child 2
+
+
+
+    mutation:
+        Mutation was an interesting beast. I originally thought it should not reference itself or another genome, because that would conserve all information about a population inside the population.
+        In the end however, using a finite constraint mutator like the one inside ga.py just has a tendency to converge on the literal hard constraints. My mutation rate was also chosen
+        based on avoiding convergence, originally starting out with only a 10% chance to mutate. That converged absurdly fast, somewhere around gen 14 it took 5 generations to get a new best
+        fitness. This led to my final value of 30% mutation, just to speed generation along. I also attempted to constrain the number of goombas here, but it seems to take too many generations
+        to actually converge on that number of goombas.
+
+        The mutation breakdown is as follows:
+        10% the space will be changed to a questionmark block with a coin(?)
+		10% the space will be changed to a breakable block(B)
+		10% the space will be changed to a coin(o)
+		20% the space will be changed to an empty space(-)
+		5%  the space will be changed to a goomba(E)
+		45% the space will not be changed 
+
+        mutation was accessed in the exact same way that it was presented in the DE.
+        Could have been done with a mutate call in generate_children like how mutation returns an unmodified genome.
+        In all honesty, it would have been much cleaner.
+
+
+
+    calculate_fitness:
+        I tried to increase the value of solvability, giving it a value of 8 in both encodings.
+        It isn't terrible for DE, but for the grid it really didn't change anything due to crippling lag from enemy entities.
+
+Ultimately, however, using individuals does not give enough structures to generate meaningful content.
+Things as basic as placing a coherent pipe for instance, would require something along the lines of ignoring all pipe segments, and then generating tubes down as the last action.
+
+While we can reason about just the number of things, for instance that goomba_max, that eventually led to a map where all the goombas were clustered on the top line on the left, which
+really was the best map IMO, because it was a rain of undodgable goombas with only empty space elsewhere on the map.
+Completely unsolvable, but very funny.
+
+
+individual_design_element:
+
+    generate_children:
+        does a two point crossover, drawn randomly.
+        _ = pivot point (not actually a part of the genome)
+        Diagram:
+        A1       B2 
+        XXXXX_XXXXX
+        YYY_YYYYYYY
+        A2        B1
+        ===>
+
+        A1      B1
+        XXXXXYYYYYYY      <= Child 1
+        YYYXXXXX          <= Child 2
+        A2      B2
+
+
+    
+    Mutation:
+        Only occurs at a 10% chance for non-empty individuals, which is all individuals because it gave crashes for empty individuals
+        It then attempts to randomize every single design element inside the current genome
+        It takes a single element, then stuffs it into a large switch statement based on what kind of design object it is.
+        
+        It randomizes blocks by offsetting them with a 33% probability in the x axis or with a mutually exclusive 33% chance in the y axis
+        It randomizes questionmark blocks with a 33:33 mutually exclusive split in the x:y axis, or inverts the presence of the powerup
+        coins are randomized with a 5:5 split for shifts in the x:y axis
+        pipes have a 5:5 chance of shifting on the x axis or changing height
+        holes function as the same as pipes, just with width instead of height
+        stairs are 33:33 for x shift/height change and with a 33% chance of adding or removing an additional step on that staircase
+        platforms are arranged in a 25:25:25:25 to change x, width, y, and finally to randomize the blocks that compose the platform
+        It also does nothing to any enemies put into its genome, which is honestly better at preventing the unchecked spread of enemies(and lag)
+
+
+
+    calculate_fitness:
+        I tried to increase the value of solvability, giving it a value of 8.
+        The DE does not show much change, and remains a boring, if generally solvable level.
+        I also varied negative space and empty percentage in a bid to select more feature rich environments
+
+    empty_individual:
+        It gained a random element so that it could stop crashing
+
+Final thoughts:
+For the ending condition we have several choices: we can ask that a certain number of generations are run, or a certain level of fitness is met.
+Potentially, if we were willing to check for an empty population, we could seed fewer and fewer individuals into the population and then conclude based on that.
+Honestly, with good evaluation metrics and scoring, choosing by fitness should be the preferred solution, because the 'fitness' is the degree to which the genetic algorithm
+is producing something that the designer wants. If we want noise to seed variation in games, I suspect there are definitely better ways to generate gibberish than a GA.

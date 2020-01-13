@@ -1,0 +1,7 @@
+Jeremy Tan
+Myron Pow
+
+The modification done to mcts_modified.py is simple, but important in the long run. The exploration factor is changed into
+100. This causes the mcts_modified.py to favor exploration rather than exploiting when going to all the different trees. This
+inevitably leads to it losing to mcts_vanilla.py as the tree size gets larger as it would rather not focus on using the information
+it has but try to get more info by exploring the tree. 
